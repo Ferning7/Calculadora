@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora VAEBA – PPSP-NR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- pdf.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- COLUNA PRINCIPAL -->
+        <div class="card">
+            <h2>Calculadora VAEBA – PPSP‑NR</h2>
+
+            <h3>Dados do participante</h3>
+            <label>Plano</label>
+            <select id="plano">
+                <option value="PPSP-NR">PPSP-NR – Não Repactuados</option>
+            </select>
+
+            <label>Nome do participante</label>
+            <input type="text" id="nome" />
+
+            <label>Data-base do cálculo</label>
+            <input type="date" id="dataBase" />
+
+            <label>Idade x na data-base</label>
+            <input type="number" id="idade" />
+
+            <label>Sexo</label>
+            <select id="sexo">
+                <option value=""></option>
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+            </select>
+
+            <h3>Benefícios e contribuições</h3>
+            <label>Benefício Petros bruto (SUP_bruta)</label>
+            <input type="text" id="supBruta" />
+            <div class="status" id="statusSup"></div>
+
+            <label>Total de contribuições (R$)</label>
+            <input type="text" id="totalContrib" />
+            <div class="status" id="statusContrib"></div>
+
+            <h3>Uploads</h3>
+            <label>Contracheque PETROS (PDF)</label>
+            <input type="file" id="contracheque" accept="application/pdf" />
+            <div class="status" id="statusContra"></div>
+
+            <label>Extrato de contribuição – PPSP-NR (PDF)</label>
+            <input type="file" id="extrato" accept="application/pdf" />
+            <div class="status" id="statusExtrato"></div>
+
+            <label>Cálculo de concessão / estudo atuarial (PDF)</label>
+            <input type="file" id="calculo" accept="application/pdf" />
+            <div class="status" id="statusCalc"></div>
+
+            <label>Declaração de IR (PDF)</label>
+            <input type="file" id="ir" accept="application/pdf" />
+            <div class="status" id="statusIr"></div>
+
+            <div class="advanced-toggle" id="toggleAdv">
+                Seção avançada – parâmetros atuariais do plano
+            </div>
+
+            <div class="advanced" id="advSection">
+                <label>NSUA</label>
+                <input type="number" id="nsua" />
+
+                <label>äₓ(12)</label>
+                <input type="text" id="ax12" />
+
+                <label>FCB</label>
+                <input type="text" id="fcb" />
+
+                <label>FATCOR</label>
+                <input type="text" id="fatcor" />
+
+                <label>Taxa real (% a.a.)</label>
+                <input type="text" id="taxaReal" />
+
+                <label>Tábua de mortalidade</label>
+                <input type="text" id="tabua" />
+
+                <label>Indexador</label>
+                <input type="text" id="indexador" />
+            </div>
+
+            <button id="calcBtn">Calcular VAEBA</button>
+            <button id="clearBtn">Limpar tudo</button>
+        </div>
+
+        <!-- COLUNA LATERAL -->
+        <div class="card" style="max-width: 420px;">
+            <h3>Resultados</h3>
+
+            <div>VAEBA líquida:</div>
+            <div class="results-value" id="resVaebaLiq">–</div>
+
+            <div>VAEBA bruta:</div>
+            <div class="results-value" id="resVaebaBruta">–</div>
+
+            <div>Fator global K:</div>
+            <div class="results-value" id="resK">–</div>
+
+            <div>SUP líquida:</div>
+            <div class="results-value" id="resSupLiq">–</div>
+
+            <div class="partial" id="partialInfo"></div>
+
+            <h3>Auditoria textual do cálculo</h3>
+            <textarea id="auditoria" readonly></textarea>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
