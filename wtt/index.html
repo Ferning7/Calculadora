@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Calculadora VAEBA - PPSP-NR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    <!-- CSS externo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Calculadora VAEBA – PPSP-NR</div>
+                    <div class="card-subtitle">
+                        Estrutura: VAEBA = NSUA × SUP × äₓ(12) × FCB × FATCOR
+                    </div>
+                </div>
+                <div class="pill">
+                    <span class="pill-dot"></span>
+                    <span>Versão demonstrativa · PPSP-NR</span>
+                </div>
+            </div>
+
+            <form id="calcForm" autocomplete="off">
+                <div class="grid grid-two">
+                    <!-- Coluna esquerda -->
+                    <div class="grid" style="gap:16px;">
+                        <div class="section">
+                            <div class="section-header">
+                                <div>
+                                    <div class="section-title">Plano & parâmetros padrão</div>
+                                    <div class="section-tag">Selecione o plano para carregar parâmetros atuariais do
+                                        PPSP-NR (2023)</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="field">
+                                    <label for="plano">Plano</label>
+                                    <select id="plano">
+                                        <option value="">Selecione...</option>
+                                        <option value="PPSP-NR">PPSP-NR</option>
+                                    </select>
+                                    <div class="small-hint">
+                                        Ao escolher PPSP-NR, NSUA, äₓ(12), FCB, taxa real, tábua e indexador são
+                                        pré-preenchidos.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-header">
+                                <div>
+                                    <div class="section-title">Dados do cliente</div>
+                                    <div class="section-tag">Informações mínimas para o cálculo da VAEBA</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="field">
+                                    <label for="nome">Nome do participante (opcional)</label>
+                                    <input type="text" id="nome" placeholder="Ex.: MARA LÚCIA COUTINHO PEDAO" />
+                                </div>
+                            </div>
+                            <div class="form-row columns-3">
+                                <div class="field">
+                                    <label for="dataBase">Data-base do cálculo</label>
+                                    <input type="date" id="dataBase" />
+                                </div>
+                                <div class="field">
+                                    <label for="idade">Idade x (anos completos)</label>
+                                    <input type="number" id="idade" min="0" step="1" placeholder="Ex.: 58" />
+                                </div>
+                                <div class="field">
+                                    <label>Sexo</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="sexo" value="Feminino" /> Fem.</label>
+                                        <label><input type="radio" name="sexo" value="Masculino" /> Masc.</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row columns-2">
+                                <div class="field">
+                                    <label for="beneficioBruto">Benefício Petros bruto (R$)</label>
+                                    <input type="text" id="beneficioBruto" placeholder="Ex.: 7.415,93" />
+                                    <div class="small-hint">Preenchido a partir de “TOTAL DOS PROVENTOS PETROS”.</div>
+                                </div>
+                                <div class="field">
+                                    <label for="totalContribuicoes">Total de contribuições – mês base (R$)</label>
+                                    <input type="text" id="totalContribuicoes" placeholder="Ex.: 1.941,84" />
+                                    <div class="small-hint">Somatório dos descontos PETROS (contracheque).</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-header">
+                                <div>
+                                    <div class="section-title">Leitura automática de PDFs</div>
+                                    <div class="section-tag">Campos são preenchidos a partir dos documentos</div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="field">
+                                    <label for="contrachequePdf">Contracheque PETROS</label>
+                                    <input type="file" id="contrachequePdf" accept="application/pdf" />
+                                    <div id="statusContracheque" class="status-text">
+                                        Extrairá nome (bloco “Nome”) + benefício bruto (“TOTAL DOS PROVENTOS PETROS”) +
+                                        contribuições PETROS.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="field">
+                                    <label for="extratoPdf">Extrato de contribuições</label>
+                                    <input type="file" id="extratoPdf" accept="application/pdf" />
+                                    <div id="statusExtrato" class="status-text">
+                                        Se houver apenas R$, somará contribuições. Se houver “Histórico de alterações de
+                                        moedas”, a soma automática será limitada para não ignorar conversões Cr$, Cz$,
+                                        NCz$, CR$, URV, R$.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="field">
+                                    <label for="concessaoPdf">Cálculo de concessão / estudo atuarial</label>
+                                    <input type="file" id="concessaoPdf" accept="application/pdf" />
+                                    <div id="statusConcessao" class="status-text">
+                                        Tentará extrair äₓ(12), FCB e FATCOR (quando constarem em texto).
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="field">
+                                    <label for="irPdf">Declaração de IR</label>
+                                    <input type="file" id="irPdf" accept="application/pdf" />
+                                    <div id="statusIR" class="status-text">
+                                        Usada como fonte secundária de nome (apenas se o contracheque não trouxer).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna direita -->
+                    <div class="grid" style="gap:16px;">
+                        <div class="section">
+                            <div class="section-header">
+                                <div>
+                                    <div class="section-title">Parâmetros atuariais (avançado)</div>
+                                    <div class="section-tag">
+                                        <span class="badge-advanced">Uso interno do escritório</span>
+                                    </div>
+                                </div>
+                                <button type="button" id="toggleAdvanced" class="toggle-advanced-btn">
+                                    <span class="toggle-icon" id="toggleIcon">+</span>
+                                    <span>Mostrar / ocultar seção avançada</span>
+                                </button>
+                            </div>
+
+                            <div id="advancedContent" class="advanced-content">
+                                <div class="form-row columns-3">
+                                    <div class="field">
+                                        <label for="nsua">NSUA (nº de suplementações anuais)</label>
+                                        <input type="number" id="nsua" min="1" step="1" />
+                                    </div>
+                                    <div class="field">
+                                        <label for="ax12">äₓ(12)</label>
+                                        <input type="text" id="ax12" />
+                                        <div class="small-hint">Fator atuarial (annuity-due, 12 pgtos/ano).</div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="fcb">FCB</label>
+                                        <input type="text" id="fcb" />
+                                    </div>
+                                </div>
+                                <div class="form-row columns-3">
+                                    <div class="field">
+                                        <label for="fatcor">FATCOR</label>
+                                        <input type="text" id="fatcor" />
+                                    </div>
+                                    <div class="field">
+                                        <label for="taxaJurosReal">Taxa de juros real (% a.a.)</label>
+                                        <input type="text" id="taxaJurosReal" />
+                                    </div>
+                                    <div class="field">
+                                        <label for="indexador">Indexador</label>
+                                        <input type="text" id="indexador" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="field">
+                                        <label for="tabua">Tábua de mortalidade / hipótese biométrica</label>
+                                        <input type="text" id="tabua" />
+                                    </div>
+                                </div>
+                                <div class="small-hint">
+                                    Ao selecionar PPSP-NR, estes campos usam os parâmetros de 2023 (DF anual).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-header">
+                                <div>
+                                    <div class="section-title">Resultados da VAEBA</div>
+                                    <div class="section-tag">Cálculo com base nos dados acima</div>
+                                </div>
+                            </div>
+                            <div class="results-box">
+                                <div class="results-header">
+                                    <div class="results-title">VAEBA – Valores estimados</div>
+                                    <div id="statusResultado" class="pill-result">Aguardando cálculo</div>
+                                </div>
+                                <div class="result-line">
+                                    <div class="result-label">Fator global K</div>
+                                    <div class="result-value" id="resultadoK">–</div>
+                                </div>
+                                <div class="result-line">
+                                    <div class="result-label">VAEBA líquida</div>
+                                    <div class="result-value" id="resultadoLiquida">–</div>
+                                </div>
+                                <div class="result-line">
+                                    <div class="result-label">VAEBA bruta</div>
+                                    <div class="result-value" id="resultadoBruta">–</div>
+                                </div>
+                                <div class="result-note" id="notaResultado">
+                                    Informe os dados e clique em <strong>Calcular VAEBA</strong>.
+                                </div>
+                            </div>
+
+                            <div style="margin-top:14px;">
+                                <label for="auditoria">Auditoria textual dos parâmetros</label>
+                                <textarea id="auditoria" readonly></textarea>
+                            </div>
+
+                            <div class="buttons-row">
+                                <button type="button" id="btnCalcular" class="btn btn-primary">
+                                    <span class="btn-icon">➜</span>
+                                    <span>Calcular VAEBA</span>
+                                </button>
+                                <button type="button" id="btnLimpar" class="btn btn-secondary">
+                                    <span class="btn-icon">⟳</span>
+                                    <span>Limpar tudo</span>
+                                </button>
+                            </div>
+
+                            <div class="footer-note">
+                                Se algum PDF estiver apenas como imagem, será necessário aplicar OCR antes de reenviar.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
